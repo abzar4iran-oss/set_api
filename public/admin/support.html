@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>پشتیبانی — النجم ثاقب</title>
+  <style>
+    body { font-family: Tahoma, sans-serif; background: #f5f7fa; margin: 0; padding: 24px; color: #1a2b4a; }
+    .wrap { max-width: 960px; margin: 0 auto; display: grid; gap: 16px; }
+    .card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.06); }
+    h1, h2 { margin: 0 0 10px; }
+    label { display: block; font-weight: 700; margin: 10px 0 6px; }
+    input, textarea, select { width: 100%; box-sizing: border-box; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; font: inherit; }
+    textarea { min-height: 90px; }
+    button { border: 0; border-radius: 12px; padding: 10px 14px; font-weight: 800; cursor: pointer; background: #2196f3; color: #fff; margin-left: 8px; }
+    .secondary { background: #eef2ff; color: #3730a3; }
+    .ticket { border: 1px solid #eef1f5; border-radius: 12px; padding: 12px; margin-top: 10px; }
+    .meta { color: #64748b; font-size: 12px; margin-top: 4px; }
+    .msg { margin-top: 8px; padding: 8px 10px; border-radius: 10px; background: #f8fafc; }
+    .msg.support { background: #eff6ff; }
+    #status { font-weight: 700; margin-top: 8px; white-space: pre-wrap; }
+    .ok { color: #15803d; } .err { color: #b91c1c; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>پشتیبانی ادمین</h1>
+      <label>کلید ادمین</label>
+      <input id="adminKey" type="password" placeholder="alnajmo-admin-change-me-2026" />
+      <label>فیلتر وضعیت</label>
+      <select id="statusFilter">
+        <option value="">همه</option>
+        <option value="open">open</option>
+        <option value="answered">answered</option>
+        <option value="closed">closed</option>
+      </select>
+      <div style="margin-top:12px">
+        <button type="button" onclick="loadTickets()">بارگذاری تیکیت‌ها</button>
+      </div>
+      <div id="status"></div>
+    </div>
+    <div class="card" id="list"></div>
+  </div>
+  <script>
+    const API = '../';
+    function key() { return document.getElementById('adminKey').value.trim(); }
+    function setStatus(msg, ok) {
+      const el = document.getElementById('status');
+      el.className = ok ? 'ok' : 'err';
+      el.textContent = msg;
+    }
+    async function loadTickets() {
+      try {
+        const status = document.getElementById('statusFilter').value;
+        const url = API + 'admin/support/tickets' + (status ? ('?status=' + encodeURIComponent(status)) : '');
+        const res = await fetch(url, { headers: { 'Accept': 'application/json', 'X-Admin-Key': key() } });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.message || 'خطا');
+        render(json.data.tickets || []);
+        setStatus('تعداد: ' + (json.data.tickets || []).length, true);
+      } catch (e) {
+        setStatus(e.message || String(e), false);
+      }
+    }
+    function render(tickets) {
+      const root = document.getElementById('list');
+      if (!tickets.length) { root.innerHTML = '<p>تیکیتی نیست.</p>'; return; }
+      root.innerHTML = tickets.map(t => {
+        const user = t.user || {};
+        const msgs = (t.messages || []).map(m =>
+          `<div class="msg ${m.author}">${m.author}: ${escapeHtml(m.body)}</div>`
+        ).join('');
+        return `<div class="ticket">
+          <strong>${escapeHtml(t.subject)}</strong>
+          <div class="meta">${escapeHtml(t.id)} · ${escapeHtml(t.status)} · ${escapeHtml(user.phone || '')} · ${escapeHtml((user.firstName||'') + ' ' + (user.lastName||''))}</div>
+          ${msgs}
+          <label>پاسخ</label>
+          <textarea id="reply-${t.id}"></textarea>
+          <div style="margin-top:8px">
+            <button type="button" onclick="reply('${t.id}')">ارسال پاسخ</button>
+            <button class="secondary" type="button" onclick="setTicketStatus('${t.id}','closed')">بستن</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    async function reply(id) {
+      const body = document.getElementById('reply-' + id).value.trim();
+      try {
+        const res = await fetch(API + 'admin/support/reply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Admin-Key': key() },
+          body: JSON.stringify({ id, message: body, status: 'answered' })
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.message || 'خطا');
+        setStatus('پاسخ ثبت شد', true);
+        loadTickets();
+      } catch (e) { setStatus(e.message || String(e), false); }
+    }
+    async function setTicketStatus(id, status) {
+      try {
+        const res = await fetch(API + 'admin/support/status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Admin-Key': key() },
+          body: JSON.stringify({ id, status })
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.message || 'خطا');
+        loadTickets();
+      } catch (e) { setStatus(e.message || String(e), false); }
+    }
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+  </script>
+</body>
+</html>

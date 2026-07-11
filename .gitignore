@@ -1,0 +1,8 @@
+/config/config.php
+/storage/logs/*.log
+/storage/database.sqlite
+/storage/otp/*
+!.gitkeep
+/public/media/
+/public/uploads/avatars/*
+!/public/uploads/avatars/.gitkeep

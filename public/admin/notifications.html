@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ارسال اعلان — النجم ثاقب</title>
+  <style>
+    body { font-family: Tahoma, sans-serif; background: #f5f7fa; margin: 0; padding: 24px; color: #1a2b4a; }
+    .card { max-width: 640px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,.06); }
+    h1 { margin: 0 0 8px; font-size: 22px; }
+    p { color: #64748b; margin: 0 0 16px; }
+    label { display: block; font-weight: 700; margin: 12px 0 6px; }
+    input, textarea, select { width: 100%; box-sizing: border-box; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; font: inherit; }
+    textarea { min-height: 100px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    button { border: 0; border-radius: 12px; padding: 12px 16px; font-weight: 800; cursor: pointer; background: #2196f3; color: #fff; }
+    #status { margin-top: 12px; font-weight: 700; white-space: pre-wrap; }
+    .ok { color: #15803d; }
+    .err { color: #b91c1c; }
+    .hint { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>ارسال اعلان</h1>
+    <p>اعلان را به یک کاربر، چند کاربر، یا همه کاربران بفرستید.</p>
+
+    <label>کلید ادمین (X-Admin-Key)</label>
+    <input id="adminKey" type="password" placeholder="alnajmo-admin-change-me-2026" />
+
+    <label>عنوان</label>
+    <input id="title" type="text" value="پیام از پشتیبانی" />
+
+    <label>متن</label>
+    <textarea id="body">سلام! یک خبر جدید در برنامه دارید.</textarea>
+
+    <label>نوع (kind)</label>
+    <select id="kind">
+      <option value="lesson">lesson</option>
+      <option value="welcome">welcome</option>
+      <option value="challenge">challenge</option>
+      <option value="compete">compete</option>
+      <option value="practice">practice</option>
+      <option value="premium">premium</option>
+    </select>
+
+    <label>deep_link (اختیاری)</label>
+    <input id="deepLink" type="text" placeholder="/learn" />
+
+    <label>هدف</label>
+    <select id="target" onchange="toggleTarget()">
+      <option value="user">یک کاربر (user_id)</option>
+      <option value="broadcast">همه کاربران</option>
+    </select>
+
+    <div id="userIdWrap">
+      <label>user_id</label>
+      <input id="userId" type="number" placeholder="1" />
+      <div class="hint">شناسه عددی جدول users</div>
+    </div>
+
+    <div class="row">
+      <button type="button" onclick="sendNotif()">ارسال</button>
+    </div>
+    <div id="status"></div>
+  </div>
+
+  <script>
+    const API = '../';
+
+    function toggleTarget() {
+      document.getElementById('userIdWrap').style.display =
+        document.getElementById('target').value === 'user' ? 'block' : 'none';
+    }
+
+    async function sendNotif() {
+      const status = document.getElementById('status');
+      status.className = '';
+      status.textContent = 'در حال ارسال…';
+      const body = {
+        title: document.getElementById('title').value.trim(),
+        body: document.getElementById('body').value.trim(),
+        kind: document.getElementById('kind').value,
+        deep_link: document.getElementById('deepLink').value.trim() || null
+      };
+      if (document.getElementById('target').value === 'broadcast') {
+        body.broadcast = true;
+      } else {
+        body.user_id = Number(document.getElementById('userId').value);
+      }
+      try {
+        const res = await fetch(API + 'admin/notifications/send', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Admin-Key': document.getElementById('adminKey').value.trim()
+          },
+          body: JSON.stringify(body)
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) {
+          throw new Error(json.message || 'خطا');
+        }
+        status.className = 'ok';
+        status.textContent = 'موفق\n' + JSON.stringify(json.data, null, 2);
+      } catch (e) {
+        status.className = 'err';
+        status.textContent = e.message || String(e);
+      }
+    }
+  </script>
+</body>
+</html>

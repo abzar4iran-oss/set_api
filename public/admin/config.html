@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Remote Config — النجم ثاقب</title>
+  <style>
+    body { font-family: Tahoma, sans-serif; background: #f5f7fa; margin: 0; padding: 24px; color: #1a2b4a; }
+    .card { max-width: 960px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,.06); }
+    h1 { margin: 0 0 8px; font-size: 22px; }
+    p { color: #64748b; margin: 0 0 16px; }
+    label { display: block; font-weight: 700; margin: 12px 0 6px; }
+    input, textarea { width: 100%; box-sizing: border-box; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; font: inherit; }
+    textarea { min-height: 420px; direction: ltr; text-align: left; font-family: Consolas, monospace; font-size: 13px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    button { border: 0; border-radius: 12px; padding: 12px 16px; font-weight: 800; cursor: pointer; }
+    .primary { background: #2196f3; color: #fff; }
+    .secondary { background: #eef2ff; color: #3730a3; }
+    .danger { background: #fee2e2; color: #b91c1c; }
+    #status { margin-top: 12px; font-weight: 700; }
+    .ok { color: #15803d; }
+    .err { color: #b91c1c; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Remote Config</h1>
+    <p>تنظیمات زنده اپ را اینجا ویرایش کنید. بعد از ذخیره، اپ در باز بعدی (یا ریفرش) می‌گیرد.</p>
+
+    <label>کلید ادمین (X-Admin-Key)</label>
+    <input id="adminKey" type="password" placeholder="alnajmo-admin-change-me-2026" />
+
+    <label>JSON تنظیمات</label>
+    <textarea id="json" spellcheck="false"></textarea>
+
+    <div class="row">
+      <button class="primary" type="button" onclick="loadConfig()">بارگذاری از سرور</button>
+      <button class="secondary" type="button" onclick="saveConfig()">ذخیره روی سرور</button>
+      <button class="danger" type="button" onclick="resetConfig()">بازگشت به پیش‌فرض</button>
+    </div>
+    <div id="status"></div>
+  </div>
+
+  <script>
+    const API = window.location.origin + window.location.pathname.replace(/\/admin\/?.*$/, '') + '/config';
+    // When served as /api/public/admin/config.html → /api/public/config
+    function baseConfigUrl() {
+      const path = window.location.pathname;
+      const idx = path.indexOf('/public/');
+      if (idx >= 0) return window.location.origin + path.slice(0, idx + '/public'.length) + '/config';
+      return window.location.origin + '/config';
+    }
+
+    function setStatus(text, ok) {
+      const el = document.getElementById('status');
+      el.textContent = text;
+      el.className = ok ? 'ok' : 'err';
+    }
+
+    async function loadConfig() {
+      try {
+        const res = await fetch(baseConfigUrl());
+        const json = await res.json();
+        if (!json.ok) throw new Error(json.message || 'خطا');
+        document.getElementById('json').value = JSON.stringify(json.data.config, null, 2);
+        setStatus('بارگذاری شد — version ' + (json.data.config.version || '?'), true);
+      } catch (e) {
+        setStatus(e.message || 'بارگذاری ناموفق', false);
+      }
+    }
+
+    async function saveConfig() {
+      try {
+        const adminKey = document.getElementById('adminKey').value.trim();
+        const config = JSON.parse(document.getElementById('json').value);
+        delete config.version;
+        delete config.updated_at;
+        const res = await fetch(baseConfigUrl(), {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Admin-Key': adminKey
+          },
+          body: JSON.stringify(config)
+        });
+        const json = await res.json();
+        if (!json.ok) throw new Error(json.message || 'خطا');
+        document.getElementById('json').value = JSON.stringify(json.data.config, null, 2);
+        setStatus('ذخیره شد — version ' + (json.data.config.version || '?'), true);
+      } catch (e) {
+        setStatus(e.message || 'ذخیره ناموفق', false);
+      }
+    }
+
+    async function resetConfig() {
+      if (!confirm('همه تنظیمات به پیش‌فرض برگردد؟')) return;
+      try {
+        const adminKey = document.getElementById('adminKey').value.trim();
+        const res = await fetch(baseConfigUrl() + '/reset', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Admin-Key': adminKey
+          },
+          body: '{}'
+        });
+        const json = await res.json();
+        if (!json.ok) throw new Error(json.message || 'خطا');
+        document.getElementById('json').value = JSON.stringify(json.data.config, null, 2);
+        setStatus('بازنشانی شد', true);
+      } catch (e) {
+        setStatus(e.message || 'بازنشانی ناموفق', false);
+      }
+    }
+
+    loadConfig();
+  </script>
+</body>
+</html>
