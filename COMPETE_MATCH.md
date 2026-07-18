@@ -63,8 +63,8 @@ GET  /compete/leaderboard
 - هر دو درست → سریع‌تر برنده راند
 - یکی درست → همان طرف
 - سپس `win` / `draw` / `loss`
-- پاداش از Remote Config: `win_reward_coins` / `draw_reward_coins`
-- امتیاز رقابت = `player_score`
+- پاداش از Remote Config: `win_reward_coins` / `win_reward_points` / `draw_reward_coins`
+- امتیاز رقابت پس از برد = `win_reward_points` (با ضریب premium در صورت اشتراک)
 - `matches_played += 1` اتمیک با `compete_match_settle`
 
 Idempotent: اگر قبلاً finished باشد، همان نتیجه برمی‌گردد.
@@ -87,4 +87,4 @@ TTL فعال: ۴۵ دقیقه (open → refund / committed → loss settle)
 - لیدربورد: در صورت لاگین از API؛ وگرنه mock محلی
 
 ## Remote Config
-`compete.entry_fee_coins`, `win_reward_coins`, `draw_reward_coins` + `features.compete_enabled`
+`compete.entry_fee_coins`, `win_reward_coins`, `win_reward_points`, `draw_reward_coins` + `features.compete_enabled`

@@ -52,7 +52,25 @@ final class AuthService
         $expiresAt = date('Y-m-d H:i:s', time() + $ttl);
         $this->otps->create($phone, password_hash($code, PASSWORD_DEFAULT), $expiresAt);
 
-        $this->sms->sendOtp($phone, $code);
+        $smsFailed = false;
+        $provider = (string) ($this->config['sms']['provider'] ?? 'log');
+        $requireRealSms = !$demoMode && $provider === 'kavenegar';
+
+        try {
+            $this->sms->sendOtp($phone, $code);
+        } catch (\Throwable $e) {
+            // وقتی کاوه‌نگار فعال است، خطا را پنهان نکن تا مشکل قالب/کلید مشخص شود.
+            if ($requireRealSms) {
+                throw $e;
+            }
+
+            $isLocal = ($this->config['env'] ?? '') === 'local';
+            if ($demoMode || $isLocal) {
+                $smsFailed = true;
+            } else {
+                throw $e;
+            }
+        }
 
         $payload = [
             'phone' => $phone,
@@ -60,8 +78,11 @@ final class AuthService
             'resend_after' => $cooldown,
         ];
 
-        if ($demoMode) {
+        if ($demoMode || $smsFailed) {
             $payload['demo_code'] = $code;
+            if ($smsFailed) {
+                $payload['sms_fallback'] = true;
+            }
         }
 
         return $payload;
@@ -97,7 +118,7 @@ final class AuthService
         $this->otps->consume((int) $otp['id']);
 
         $user = $this->users->findByPhone($phone);
-        if ($user) {
+        if ($user && $this->isProfileComplete($user)) {
             $token = $this->issueAuthToken((int) $user['id']);
             return [
                 'status' => 'authenticated',
@@ -106,6 +127,7 @@ final class AuthService
             ];
         }
 
+        // کاربر جدید یا پروفایل ناقص/مهمان قبلی → باید فرم اطلاعات را پر کند
         $registrationToken = $this->issueRegistrationToken($phone);
         return [
             'status' => 'needs_register',
@@ -121,18 +143,7 @@ final class AuthService
 
         $this->assertRegistrationForm($form);
 
-        $existing = $this->users->findByPhone($phone);
-        if ($existing) {
-            $this->tokens->consumeRegistrationToken((int) $row['id']);
-            $token = $this->issueAuthToken((int) $existing['id']);
-            return [
-                'token' => $token,
-                'profile' => $this->mapProfile($existing),
-            ];
-        }
-
-        $user = $this->users->create([
-            'phone' => $phone,
+        $payload = [
             'first_name' => trim((string) $form['first_name']),
             'last_name' => trim((string) $form['last_name']),
             'age' => (int) $form['age'],
@@ -143,7 +154,22 @@ final class AuthService
             'has_previous_class_experience' => !empty($form['has_previous_class_experience']),
             'previous_class_details' => trim((string) ($form['previous_class_details'] ?? '')),
             'profile_complete' => true,
-        ]);
+        ];
+
+        $existing = $this->users->findByPhone($phone);
+        if ($existing) {
+            $user = $this->users->updateProfile((int) $existing['id'], $payload);
+            $this->tokens->consumeRegistrationToken((int) $row['id']);
+            $token = $this->issueAuthToken((int) $user['id']);
+            return [
+                'token' => $token,
+                'profile' => $this->mapProfile($user),
+            ];
+        }
+
+        $user = $this->users->create(array_merge($payload, [
+            'phone' => $phone,
+        ]));
 
         $this->tokens->consumeRegistrationToken((int) $row['id']);
         $token = $this->issueAuthToken((int) $user['id']);
@@ -156,40 +182,7 @@ final class AuthService
 
     public function skipRegistration(string $registrationToken): array
     {
-        $row = $this->requireRegistrationToken($registrationToken);
-        $phone = $row['phone'];
-
-        $existing = $this->users->findByPhone($phone);
-        if ($existing) {
-            $this->tokens->consumeRegistrationToken((int) $row['id']);
-            $token = $this->issueAuthToken((int) $existing['id']);
-            return [
-                'token' => $token,
-                'profile' => $this->mapProfile($existing),
-            ];
-        }
-
-        $user = $this->users->create([
-            'phone' => $phone,
-            'first_name' => 'کاربر',
-            'last_name' => 'مهمان',
-            'age' => 0,
-            'school_grade' => 'ثبت‌نشده',
-            'province' => 'ثبت‌نشده',
-            'city' => 'ثبت‌نشده',
-            'quran_reading_level' => 'ثبت‌نشده',
-            'has_previous_class_experience' => false,
-            'previous_class_details' => '',
-            'profile_complete' => true,
-        ]);
-
-        $this->tokens->consumeRegistrationToken((int) $row['id']);
-        $token = $this->issueAuthToken((int) $user['id']);
-
-        return [
-            'token' => $token,
-            'profile' => $this->mapProfile($user),
-        ];
+        throw new RuntimeException('ورود بدون تکمیل اطلاعات مجاز نیست. لطفاً فرم ثبت‌نام را پر کنید.');
     }
 
     public function me(?string $bearerToken): array
@@ -293,6 +286,48 @@ final class AuthService
         }
     }
 
+    private function isProfileComplete(array $user): bool
+    {
+        if (empty($user['profile_complete'])) {
+            return false;
+        }
+
+        $first = trim((string) ($user['first_name'] ?? ''));
+        $last = trim((string) ($user['last_name'] ?? ''));
+        $grade = trim((string) ($user['school_grade'] ?? ''));
+        $province = trim((string) ($user['province'] ?? ''));
+        $city = trim((string) ($user['city'] ?? ''));
+        $reading = trim((string) ($user['quran_reading_level'] ?? ''));
+        $age = (int) ($user['age'] ?? 0);
+
+        if ($first === '' || $last === '') {
+            return false;
+        }
+
+        // حساب‌های مهمان قدیمی که با skip ساخته شده بودند
+        if ($first === 'کاربر' && $last === 'مهمان') {
+            return false;
+        }
+
+        if ($grade === '' || $grade === 'ثبت‌نشده') {
+            return false;
+        }
+        if ($province === '' || $province === 'ثبت‌نشده') {
+            return false;
+        }
+        if ($city === '' || $city === 'ثبت‌نشده') {
+            return false;
+        }
+        if ($reading === '' || $reading === 'ثبت‌نشده') {
+            return false;
+        }
+        if ($age < 5 || $age > 100) {
+            return false;
+        }
+
+        return true;
+    }
+
     private function mapProfile(array $user): array
     {
         $created = $user['created_at'] ?? date('c');
@@ -311,7 +346,7 @@ final class AuthService
             'previousClassDetails' => (string) ($user['previous_class_details'] ?? ''),
             'phone' => (string) $user['phone'],
             'registeredAt' => $registeredAt,
-            'profileComplete' => (bool) $user['profile_complete'],
+            'profileComplete' => $this->isProfileComplete($user),
             'avatarUrl' => !empty($user['avatar_url']) ? (string) $user['avatar_url'] : null,
         ];
     }

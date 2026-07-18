@@ -358,6 +358,7 @@ final class ShopService
             'coins' => (int) ($pack['coins'] ?? 0),
             'priceLabel' => (string) ($pack['price_label'] ?? $pack['priceLabel'] ?? ''),
             'hint' => (string) ($pack['hint'] ?? ''),
+            'badge' => (string) ($pack['badge'] ?? $pack['badge_label'] ?? $pack['badgeLabel'] ?? ''),
             'amountIrr' => (int) ($pack['amount_irr'] ?? $pack['amountIrr'] ?? 0),
             'active' => !isset($pack['active']) || !empty($pack['active']),
         ];
@@ -423,7 +424,7 @@ final class ShopService
 
     public function appReturnUrl(array $order, bool $ok): string
     {
-        $base = (string) ($this->appConfig['payments']['app_return_url'] ?? 'alnajmo://shop/result');
+        $base = (string) ($this->appConfig['payments']['app_return_url'] ?? 'alnajmothagheb://shop/result');
         $sep = str_contains($base, '?') ? '&' : '?';
         return $base . $sep . http_build_query([
             'ok' => $ok ? '1' : '0',

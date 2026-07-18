@@ -67,10 +67,10 @@ final class DailyChallengeService
             'won_today' => $wonToday,
             'played_today' => $playedToday,
             'one_attempt_per_day' => $oneAttempt,
-            'reward_coins' => (int) ($dc['reward_coins'] ?? 20),
+            'reward_coins' => (int) ($dc['reward_coins'] ?? 15),
             'win_points' => (int) ($dc['win_points'] ?? 1),
-            'standard_seconds' => (int) ($dc['standard_seconds'] ?? 25),
-            'easy_question_seconds' => (int) ($dc['easy_question_seconds'] ?? 12),
+            'standard_seconds' => (int) ($dc['standard_seconds'] ?? 45),
+            'easy_question_seconds' => (int) ($dc['easy_question_seconds'] ?? 25),
             'played_question_ids' => $progress['dailyChallengePlayedQuestionIds'] ?? [],
             'active_attempt' => $active,
             'latest_attempt' => $latest ? $this->mapAttempt($latest) : null,
@@ -467,11 +467,11 @@ final class DailyChallengeService
     private function publicConfig(array $dc): array
     {
         return [
-            'rewardCoins' => (int) ($dc['reward_coins'] ?? 20),
+            'rewardCoins' => (int) ($dc['reward_coins'] ?? 15),
             'winPoints' => (int) ($dc['win_points'] ?? 1),
             'oneAttemptPerDay' => !empty($dc['one_attempt_per_day']),
-            'standardSeconds' => (int) ($dc['standard_seconds'] ?? 25),
-            'easyQuestionSeconds' => (int) ($dc['easy_question_seconds'] ?? 12),
+            'standardSeconds' => (int) ($dc['standard_seconds'] ?? 45),
+            'easyQuestionSeconds' => (int) ($dc['easy_question_seconds'] ?? 25),
         ];
     }
 

@@ -182,13 +182,16 @@ final class ProfileService
             }
         }
 
-        $publicUrl = rtrim((string) ($this->appConfig['base_url'] ?? ''), '/') . '/uploads/avatars/' . $filename;
+        $publicPath = '/uploads/avatars/' . $filename;
+        $publicUrl = rtrim((string) ($this->appConfig['base_url'] ?? ''), '/') . $publicPath;
         $updated = $this->users->updateAvatarUrl($userId, $publicUrl);
 
         return [
             'profile' => $this->mapProfile($updated),
             'settings' => $this->mapSettings($updated),
+            // مسیر نسبی هم می‌دهیم تا کلاینت با API_BASE_URL فعلی بسازد
             'avatarUrl' => $publicUrl,
+            'avatar_path' => $publicPath,
         ];
     }
 
@@ -230,7 +233,13 @@ final class ProfileService
             'previousClassDetails' => (string) ($user['previous_class_details'] ?? ''),
             'phone' => (string) $user['phone'],
             'registeredAt' => $registeredAt,
-            'profileComplete' => (bool) $user['profile_complete'],
+            'profileComplete' => (bool) $user['profile_complete']
+                && trim((string) ($user['first_name'] ?? '')) !== ''
+                && trim((string) ($user['last_name'] ?? '')) !== ''
+                && !((string) $user['first_name'] === 'کاربر' && (string) $user['last_name'] === 'مهمان')
+                && trim((string) ($user['school_grade'] ?? '')) !== ''
+                && trim((string) ($user['school_grade'] ?? '')) !== 'ثبت‌نشده'
+                && (int) ($user['age'] ?? 0) >= 5,
             'avatarUrl' => is_string($avatar) && $avatar !== '' ? $avatar : null,
         ];
     }

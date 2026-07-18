@@ -1,93 +1,121 @@
 {
-  "version": 1,
-  "updated_at": "2026-07-11T18:00:00+00:00",
-  "features": {
-    "compete_enabled": true,
-    "daily_challenge_enabled": true,
-    "shop_enabled": true,
-    "notifications_enabled": true,
-    "support_enabled": true,
-    "unlock_all_stages": true,
-    "show_designer_exercise_nav": true
-  },
-  "app": {
-    "min_version": "1.0.0",
-    "force_update": false,
-    "maintenance_mode": false,
-    "maintenance_message": "در حال به‌روزرسانی سرور هستیم. چند دقیقه دیگر دوباره تلاش کنید.",
-    "global_banner": null,
-    "global_banner_kind": "info"
-  },
-  "economy": {
-    "starting_coins": 100,
-    "max_hearts": 5,
-    "heart_refill_coin_cost": 50,
-    "heart_regen_minutes": 240,
-    "wrong_answer_coin_penalty": 5,
-    "correct_answer_coin_reward": 2,
-    "correct_answer_points_reward": 2,
-    "lesson_complete_coin_reward": 8,
-    "lesson_complete_points_reward": 10,
-    "voice_exercise_coin_reward": 5,
-    "points_conversion_unit": 100,
-    "coins_per_conversion_unit": 10,
-    "free_content_percent": 25,
-    "premium_unlimited_hearts": true,
-    "premium_no_coin_penalty": true,
-    "premium_points_multiplier": 2
-  },
-  "daily_challenge": {
-    "reward_coins": 20,
-    "win_points": 1,
-    "one_attempt_per_day": true,
-    "standard_seconds": 25,
-    "easy_question_seconds": 12
-  },
-  "compete": {
-    "entry_fee_coins": 10,
-    "win_reward_coins": 25,
-    "draw_reward_coins": 5
-  },
-  "surah_listen": {
-    "default_repeat_count": 3,
-    "min_repeat_count": 3,
-    "max_repeat_count": 10
-  },
-  "shop": {
-    "vip_plan": {
-      "id": "vip_monthly",
-      "title": "اشتراک ویژه",
-      "price_label": "۱۹۹٬۰۰۰ تومان / ماه",
-      "description": "باز شدن همهٔ دروس، قلب نامحدود، بدون جریمهٔ سکه، امتیاز دوبرابر و دسترسی کامل به مسیر یادگیری.",
-      "amount_irr": 1990000,
-      "duration_days": 30,
-      "active": true
+    "version": 7,
+    "updated_at": "2026-07-18T22:00:00+00:00",
+    "features": {
+        "compete_enabled": true,
+        "daily_challenge_enabled": true,
+        "shop_enabled": true,
+        "notifications_enabled": true,
+        "support_enabled": true,
+        "unlock_all_stages": false,
+        "show_designer_exercise_nav": true
     },
-    "coin_packs": [
-      {
-        "id": "c1",
-        "coins": 500,
-        "price_label": "۷۹٬۰۰۰ تومان",
-        "hint": "مناسب برای مسابقات و چالش‌ها",
-        "amount_irr": 790000,
-        "active": true
-      },
-      {
-        "id": "c2",
-        "coins": 1200,
-        "price_label": "۱۴۹٬۰۰۰ تومان",
-        "hint": "بسته محبوب یادگیرندگان",
-        "amount_irr": 1490000,
-        "active": true
-      },
-      {
-        "id": "c3",
-        "coins": 3000,
-        "price_label": "۲۹۹٬۰۰۰ تومان",
-        "hint": "بیشترین ارزش برای خرید سکه",
-        "amount_irr": 2990000,
-        "active": true
-      }
-    ]
-  }
+    "app": {
+        "min_version": "1.0.0",
+        "force_update": false,
+        "maintenance_mode": false,
+        "maintenance_message": "در حال به‌روزرسانی سرور هستیم. چند دقیقه دیگر دوباره تلاش کنید.",
+        "global_banner": null,
+        "global_banner_kind": "info"
+    },
+    "economy": {
+        "starting_coins": 110,
+        "max_hearts": 5,
+        "heart_refill_coin_cost": 12,
+        "heart_regen_minutes": 240,
+        "wrong_answer_coin_penalty": 0,
+        "correct_answer_coin_reward": 2,
+        "correct_answer_points_reward": 2,
+        "lesson_complete_coin_reward": 5,
+        "lesson_complete_points_reward": 10,
+        "voice_exercise_coin_reward": 3,
+        "lesson_entry_cost": 2,
+        "points_conversion_unit": 100,
+        "coins_per_conversion_unit": 10,
+        "free_content_percent": 25,
+        "premium_unlimited_hearts": true,
+        "premium_no_coin_penalty": true,
+        "premium_points_multiplier": 2
+    },
+    "daily_challenge": {
+        "reward_coins": 15,
+        "win_points": 1,
+        "one_attempt_per_day": true,
+        "standard_seconds": 45,
+        "easy_question_seconds": 25
+    },
+    "compete": {
+        "entry_fee_coins": 5,
+        "win_reward_coins": 10,
+        "win_reward_points": 20,
+        "draw_reward_coins": 0
+    },
+    "surah_listen": {
+        "default_repeat_count": 3,
+        "min_repeat_count": 3,
+        "max_repeat_count": 10
+    },
+    "shop": {
+        "vip_plan": {
+            "id": "vip_monthly",
+            "title": "اشتراک ویژه",
+            "price_label": "۷۹٬۰۰۰ تومان / ماه",
+            "description": "قفل مسیر را باز کن — قلب نامحدود، امتیاز دوبرابر، همهٔ درس‌ها.",
+            "amount_irr": 790000,
+            "duration_days": 30,
+            "active": false
+        },
+        "coin_packs": [
+            {
+                "id": "c1",
+                "coins": 270,
+                "price_label": "۲۱٬۰۰۰ تومان",
+                "hint": "وسط بازی گیر نکن — سریع دوباره شروع کن",
+                "amount_irr": 210000,
+                "active": true
+            },
+            {
+                "id": "c2",
+                "coins": 500,
+                "price_label": "۴۵٬۰۰۰ تومان",
+                "hint": "قلب، چالش و تمرین همیشه دم دستت باشد",
+                "amount_irr": 450000,
+                "active": true
+            },
+            {
+                "id": "c3",
+                "coins": 1200,
+                "price_label": "۸۹٬۰۰۰ تومان",
+                "hint": "انتخاب اول کسانی که نمی‌خواهند متوقف شوند",
+                "badge": "محبوب",
+                "amount_irr": 890000,
+                "active": true
+            },
+            {
+                "id": "c4",
+                "coins": 2500,
+                "price_label": "۱۵۹٬۰۰۰ تومان",
+                "hint": "برای مسابقه و تمرین‌های سخت، آماده‌تر باش",
+                "amount_irr": 1590000,
+                "active": true
+            },
+            {
+                "id": "c5",
+                "coins": 5500,
+                "price_label": "۲۹۹٬۰۰۰ تومان",
+                "hint": "کیف پر از سکه — هیچ فرصتی از دست نده",
+                "amount_irr": 2990000,
+                "active": true
+            },
+            {
+                "id": "c6",
+                "coins": 7000,
+                "price_label": "۳۴۹٬۰۰۰ تومان",
+                "hint": "بیشترین سکه با کمترین هزینه برای هر سکه",
+                "badge": "بهترین ارزش",
+                "amount_irr": 3490000,
+                "active": true
+            }
+        ]
+    }
 }

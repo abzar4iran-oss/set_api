@@ -120,11 +120,11 @@ final class CompeteMatchRepository
         return $row ?: [];
     }
 
-    /** @return list<array{user_id:int,compete_points:int,first_name:string,last_name:string,avatar_url:?string}> */
+    /** @return list<array{user_id:int,compete_points:int,first_name:string,last_name:string,avatar_url:?string,city:string}> */
     public function leaderboard(int $limit = 10): array
     {
         $limit = max(1, min(50, $limit));
-        $sql = "SELECT u.id AS user_id, u.first_name, u.last_name, u.avatar_url,
+        $sql = "SELECT u.id AS user_id, u.first_name, u.last_name, u.avatar_url, u.city,
                        COALESCE(p.compete_points, 0) AS compete_points,
                        COALESCE(p.matches_played, 0) AS matches_played
                 FROM users u

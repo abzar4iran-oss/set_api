@@ -29,6 +29,7 @@ final class ProgressRepository
                 takeoff_platform_completed, matches_played,
                 daily_challenge_locked_until, daily_challenge_won_day_key,
                 daily_challenge_played_day_key, daily_challenge_played_question_ids,
+                word_play_level_index, word_play_content_version,
                 created_at, updated_at
             ) VALUES (
                 :user_id, :revision, :coins, :hearts, :compete_points, :is_premium, :premium_expires_at,
@@ -36,6 +37,7 @@ final class ProgressRepository
                 :takeoff_platform_completed, :matches_played,
                 :daily_challenge_locked_until, :daily_challenge_won_day_key,
                 :daily_challenge_played_day_key, :daily_challenge_played_question_ids,
+                :word_play_level_index, :word_play_content_version,
                 :created_at, :updated_at
             )'
         );
@@ -57,6 +59,8 @@ final class ProgressRepository
             'daily_challenge_won_day_key' => $data['daily_challenge_won_day_key'],
             'daily_challenge_played_day_key' => $data['daily_challenge_played_day_key'],
             'daily_challenge_played_question_ids' => $data['daily_challenge_played_question_ids'] ?? '[]',
+            'word_play_level_index' => (int) ($data['word_play_level_index'] ?? 0),
+            'word_play_content_version' => (int) ($data['word_play_content_version'] ?? 9),
             'created_at' => $now,
             'updated_at' => $now,
         ]);
@@ -83,6 +87,8 @@ final class ProgressRepository
                 daily_challenge_won_day_key = :daily_challenge_won_day_key,
                 daily_challenge_played_day_key = :daily_challenge_played_day_key,
                 daily_challenge_played_question_ids = :daily_challenge_played_question_ids,
+                word_play_level_index = :word_play_level_index,
+                word_play_content_version = :word_play_content_version,
                 updated_at = :updated_at
              WHERE user_id = :user_id'
         );
@@ -104,6 +110,8 @@ final class ProgressRepository
             'daily_challenge_won_day_key' => $data['daily_challenge_won_day_key'],
             'daily_challenge_played_day_key' => $data['daily_challenge_played_day_key'],
             'daily_challenge_played_question_ids' => $data['daily_challenge_played_question_ids'],
+            'word_play_level_index' => (int) ($data['word_play_level_index'] ?? 0),
+            'word_play_content_version' => (int) ($data['word_play_content_version'] ?? 9),
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
 

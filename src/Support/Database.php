@@ -278,8 +278,35 @@ final class Database
         );
 
         self::ensureColumn($pdo, 'user_progress', 'premium_expires_at', $mysql ? 'DATETIME NULL' : 'TEXT NULL');
+        self::ensureColumn($pdo, 'user_progress', 'word_play_level_index', 'INTEGER NOT NULL DEFAULT 0');
+        self::ensureColumn($pdo, 'user_progress', 'word_play_content_version', 'INTEGER NOT NULL DEFAULT 9');
         self::ensureColumn($pdo, 'users', 'avatar_url', $mysql ? 'VARCHAR(512) NULL' : 'TEXT NULL');
         self::ensureColumn($pdo, 'users', 'settings_json', $mysql ? 'LONGTEXT NULL' : 'TEXT NULL');
+
+        $pdo->exec(
+            "CREATE TABLE IF NOT EXISTS word_play_attempts (
+                id {$id},
+                user_id {$fkUser},
+                status {$text} NOT NULL,
+                attempt_token {$text} NOT NULL UNIQUE,
+                stage_index INTEGER NOT NULL DEFAULT 0,
+                content_version INTEGER NOT NULL DEFAULT 9,
+                started_at_ms INTEGER NOT NULL,
+                completed_at_ms INTEGER NULL,
+                hints_used INTEGER NOT NULL DEFAULT 0,
+                target_count INTEGER NULL,
+                bonus_count INTEGER NULL,
+                coins_awarded INTEGER NOT NULL DEFAULT 0,
+                points_awarded INTEGER NOT NULL DEFAULT 0,
+                chapter_gift INTEGER NOT NULL DEFAULT 0,
+                created_at {$dt} NOT NULL,
+                updated_at {$dt} NOT NULL
+            )"
+        );
+        $pdo->exec(
+            'CREATE INDEX IF NOT EXISTS idx_word_play_user_stage
+             ON word_play_attempts (user_id, stage_index, status)'
+        );
 
         $pdo->exec(
             "CREATE TABLE IF NOT EXISTS support_tickets (

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Repositories\CompeteMatchRepository;
+use App\Repositories\UserRepository;
 use RuntimeException;
 
 final class CompeteMatchService
@@ -24,7 +25,8 @@ final class CompeteMatchService
         private CompeteMatchRepository $matches,
         private ProgressService $progress,
         private RemoteConfigService $remoteConfig,
-        private ?NotificationService $notifications = null
+        private ?NotificationService $notifications = null,
+        private ?UserRepository $users = null
     ) {
     }
 
@@ -80,6 +82,7 @@ final class CompeteMatchService
                 'rank' => $rank,
                 'userId' => $uid,
                 'name' => $name,
+                'city' => trim((string) ($row['city'] ?? '')),
                 'points' => (int) $row['compete_points'],
                 'matchesPlayed' => (int) $row['matches_played'],
                 'isCurrentUser' => $uid === $userId,
@@ -126,11 +129,11 @@ final class CompeteMatchService
         }
 
         $compete = $this->competeConfig();
-        $fee = (int) ($compete['entry_fee_coins'] ?? 10);
+        $fee = (int) ($compete['entry_fee_coins'] ?? 5);
         $charge = $this->progress->chargeCompeteEntry($userId, $fee);
 
         $seed = random_int(1, 0x7FFFFFFF);
-        $opponent = $this->buildOpponent($seed);
+        $opponent = $this->buildOpponent($userId, $seed);
         $token = bin2hex(random_bytes(24));
 
         $row = $this->matches->create([
@@ -325,14 +328,16 @@ final class CompeteMatchService
 
         $compete = $this->competeConfig();
         $reward = 0;
+        $basePoints = 0;
         if ($outcome === 'win') {
-            $reward = (int) ($compete['win_reward_coins'] ?? 25);
+            $reward = (int) ($compete['win_reward_coins'] ?? 10);
+            $basePoints = (int) ($compete['win_reward_points'] ?? 20);
         } elseif ($outcome === 'draw') {
-            $reward = (int) ($compete['draw_reward_coins'] ?? 5);
+            $reward = (int) ($compete['draw_reward_coins'] ?? 0);
         }
 
-        $pointsAwarded = $playerScore;
-        $settle = $this->progress->settleCompeteMatch($userId, $outcome, $reward, $pointsAwarded);
+        $settle = $this->progress->settleCompeteMatch($userId, $outcome, $reward, $basePoints);
+        $pointsAwarded = (int) ($settle['meta']['points_added'] ?? $basePoints);
 
         $updated = $this->matches->update((int) $row['id'], [
             'status' => 'finished',
@@ -431,21 +436,34 @@ final class CompeteMatchService
         return 'none';
     }
 
-    private function buildOpponent(int $seed): array
+    private function buildOpponent(int $userId, int $seed): array
     {
         mt_srand($seed);
-        $preferHuman = (mt_rand() / mt_getrandmax()) < 0.38;
-        $name = self::PLAYER_NAMES[mt_rand(0, count(self::PLAYER_NAMES) - 1)];
+        $preferHuman = (mt_rand() / mt_getrandmax()) < 0.72;
         $color = self::PLAYER_COLORS[mt_rand(0, count(self::PLAYER_COLORS) - 1)];
 
-        if ($preferHuman) {
-            return [
-                'id' => 'guest_' . $seed,
-                'displayName' => $name,
-                'isBot' => false,
-                'avatarColor' => $color,
-                'skill' => round(0.55 + (mt_rand() / mt_getrandmax()) * 0.28, 4),
-            ];
+        if ($preferHuman && $this->users !== null) {
+            $real = $this->users->findRandomOpponent($userId);
+            if ($real) {
+                $uid = (int) $real['id'];
+                $displayName = trim(
+                    ((string) ($real['first_name'] ?? '')) . ' ' . ((string) ($real['last_name'] ?? ''))
+                );
+                if ($displayName === '') {
+                    $displayName = 'بازیکن';
+                }
+                $avatarUrl = !empty($real['avatar_url']) ? (string) $real['avatar_url'] : null;
+
+                return [
+                    'id' => 'user_' . $uid,
+                    'userId' => $uid,
+                    'displayName' => $displayName,
+                    'isBot' => false,
+                    'avatarColor' => self::PLAYER_COLORS[($uid - 1) % count(self::PLAYER_COLORS)],
+                    'avatarUrl' => $avatarUrl,
+                    'skill' => round(0.55 + (mt_rand() / mt_getrandmax()) * 0.28, 4),
+                ];
+            }
         }
 
         return [
@@ -453,6 +471,7 @@ final class CompeteMatchService
             'displayName' => self::PLAYER_NAMES[mt_rand(0, count(self::PLAYER_NAMES) - 1)],
             'isBot' => true,
             'avatarColor' => $color,
+            'avatarUrl' => null,
             'skill' => round(0.34 + (mt_rand() / mt_getrandmax()) * 0.2, 4),
         ];
     }
@@ -525,9 +544,13 @@ final class CompeteMatchService
             'entryFee' => (int) $row['entry_fee'],
             'opponent' => [
                 'id' => (string) ($opponent['id'] ?? ''),
+                'userId' => isset($opponent['userId']) ? (int) $opponent['userId'] : null,
                 'displayName' => (string) ($opponent['displayName'] ?? 'حریف'),
                 'isBot' => !empty($opponent['isBot']),
                 'avatarColor' => (string) ($opponent['avatarColor'] ?? '#7C3AED'),
+                'avatarUrl' => !empty($opponent['avatarUrl'])
+                    ? (string) $opponent['avatarUrl']
+                    : (!empty($opponent['avatar_url']) ? (string) $opponent['avatar_url'] : null),
                 'skill' => (float) ($opponent['skill'] ?? 0.5),
             ],
             'rounds' => is_array($rounds) ? $rounds : null,
@@ -562,9 +585,10 @@ final class CompeteMatchService
     {
         $c = $this->competeConfig();
         return [
-            'entryFeeCoins' => (int) ($c['entry_fee_coins'] ?? 10),
-            'winRewardCoins' => (int) ($c['win_reward_coins'] ?? 25),
-            'drawRewardCoins' => (int) ($c['draw_reward_coins'] ?? 5),
+            'entryFeeCoins' => (int) ($c['entry_fee_coins'] ?? 5),
+            'winRewardCoins' => (int) ($c['win_reward_coins'] ?? 10),
+            'winRewardPoints' => (int) ($c['win_reward_points'] ?? 20),
+            'drawRewardCoins' => (int) ($c['draw_reward_coins'] ?? 0),
             'roundCount' => self::ROUND_COUNT,
             'roundSeconds' => self::ROUND_SECONDS,
         ];

@@ -199,7 +199,7 @@ final class ProgressService
 
         return [
             'revision' => 0,
-            'coins' => (int) ($economy['starting_coins'] ?? 100),
+            'coins' => (int) ($economy['starting_coins'] ?? 110),
             'hearts' => (int) ($economy['max_hearts'] ?? 5),
             'compete_points' => 0,
             'is_premium' => 0,
@@ -213,7 +213,29 @@ final class ProgressService
             'daily_challenge_won_day_key' => null,
             'daily_challenge_played_day_key' => null,
             'daily_challenge_played_question_ids' => '[]',
+            'word_play_level_index' => 0,
+            'word_play_content_version' => 9,
         ];
+    }
+
+    /** به‌روزرسانی پیشرفت بازی با کلمات بدون تغییر سکه/امتیاز */
+    public function setWordPlayProgress(int $userId, int $levelIndex, int $contentVersion): array
+    {
+        $row = $this->ensureRow($userId);
+        $row['word_play_level_index'] = max(0, $levelIndex);
+        $row['word_play_content_version'] = max(1, $contentVersion);
+        $row['revision'] = (int) $row['revision'] + 1;
+        $saved = $this->progress->save($userId, $this->rowToSaveArray($row));
+        $this->progress->addEvent(
+            $userId,
+            'word_play_progress',
+            ['level_index' => $levelIndex, 'content_version' => $contentVersion],
+            0,
+            0,
+            0,
+            (int) $saved['revision']
+        );
+        return $this->mapPublic($saved);
     }
 
     private function applyHeartRegenAndPersist(int $userId, array $row): array
@@ -294,7 +316,7 @@ final class ProgressService
 
         if ($this->isLearnLesson($lessonId)) {
             $economy = $this->economy();
-            $coinReward = (int) ($economy['lesson_complete_coin_reward'] ?? 8);
+            $coinReward = (int) ($economy['lesson_complete_coin_reward'] ?? 5);
             $pointsReward = (int) ($economy['lesson_complete_points_reward'] ?? 10);
             if ($this->isPremiumActive($row)) {
                 $mult = (int) ($economy['premium_points_multiplier'] ?? 2);
@@ -329,7 +351,7 @@ final class ProgressService
 
         $coinsDeducted = 0;
         if (!$noPenalty) {
-            $coinsDeducted = (int) ($economy['wrong_answer_coin_penalty'] ?? 5);
+            $coinsDeducted = (int) ($economy['wrong_answer_coin_penalty'] ?? 0);
             $row['coins'] = max(0, (int) $row['coins'] - $coinsDeducted);
         }
 
@@ -375,7 +397,7 @@ final class ProgressService
             return [$row, ['refill' => false, 'already_full' => true]];
         }
 
-        $cost = (int) ($economy['heart_refill_coin_cost'] ?? 50);
+        $cost = (int) ($economy['heart_refill_coin_cost'] ?? 12);
         if ((int) $row['coins'] < $cost) {
             throw new RuntimeException('سکه کافی برای پر کردن قلب نیست.');
         }
@@ -418,7 +440,7 @@ final class ProgressService
         }
 
         $dc = $this->dailyChallengeConfig();
-        $reward = (int) ($dc['reward_coins'] ?? 20);
+        $reward = (int) ($dc['reward_coins'] ?? 15);
         $points = (int) ($dc['win_points'] ?? 1);
         $row['coins'] = (int) $row['coins'] + $reward;
         $row['compete_points'] = (int) $row['compete_points'] + $points;
@@ -711,6 +733,11 @@ final class ProgressService
         $reward = max(0, (int) ($payload['reward_coins'] ?? 0));
         $points = max(0, (int) ($payload['points'] ?? 0));
 
+        if ($outcome === 'win' && $points > 0 && $this->isPremiumActive($row)) {
+            $economy = $this->economy();
+            $points *= max(1, (int) ($economy['premium_points_multiplier'] ?? 2));
+        }
+
         $row['coins'] = (int) $row['coins'] + $reward;
         $row['compete_points'] = (int) $row['compete_points'] + $points;
         $row['matches_played'] = (int) $row['matches_played'] + 1;
@@ -855,6 +882,16 @@ final class ProgressService
                 ?? null
             ),
             'daily_challenge_played_question_ids' => json_encode($ids, JSON_UNESCAPED_UNICODE) ?: '[]',
+            'word_play_level_index' => max(0, (int) (
+                $incoming['word_play_level_index']
+                ?? $incoming['wordPlayLevelIndex']
+                ?? $defaults['word_play_level_index']
+            )),
+            'word_play_content_version' => max(1, (int) (
+                $incoming['word_play_content_version']
+                ?? $incoming['wordPlayContentVersion']
+                ?? $defaults['word_play_content_version']
+            )),
         ];
     }
 
@@ -889,6 +926,8 @@ final class ProgressService
             'daily_challenge_won_day_key' => $this->nullableString($row['daily_challenge_won_day_key'] ?? null),
             'daily_challenge_played_day_key' => $this->nullableString($row['daily_challenge_played_day_key'] ?? null),
             'daily_challenge_played_question_ids' => (string) $ids,
+            'word_play_level_index' => (int) ($row['word_play_level_index'] ?? 0),
+            'word_play_content_version' => (int) ($row['word_play_content_version'] ?? 9),
         ];
     }
 
@@ -922,6 +961,8 @@ final class ProgressService
             'dailyChallengeWonDayKey' => $this->nullableString($row['daily_challenge_won_day_key'] ?? null),
             'dailyChallengePlayedDayKey' => $this->nullableString($row['daily_challenge_played_day_key'] ?? null),
             'dailyChallengePlayedQuestionIds' => $ids,
+            'wordPlayLevelIndex' => (int) ($row['word_play_level_index'] ?? 0),
+            'wordPlayContentVersion' => (int) ($row['word_play_content_version'] ?? 9),
             'updatedAt' => isset($row['updated_at'])
                 ? date('c', strtotime((string) $row['updated_at']) ?: time())
                 : date('c'),

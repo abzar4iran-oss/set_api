@@ -6,10 +6,11 @@ return [
     'app_name' => 'Al Najmo Thagheb API',
     'env' => 'local',
     'debug' => true,
-    'base_url' => 'http://127.0.0.1:8080',
+    // Laragon: http://localhost/api/public  |  PHP built-in: http://127.0.0.1:8080
+    'base_url' => 'http://localhost/api/public',
 
     'db' => [
-        'driver' => 'sqlite', // sqlite | mysql
+        'driver' => 'sqlite', // sqlite | mysql — SQLite auto-migrates; prefer it locally
         'sqlite_path' => dirname(__DIR__) . '/storage/database.sqlite',
         'host' => '127.0.0.1',
         'port' => 3306,
@@ -28,8 +29,9 @@ return [
         'ttl_seconds' => 300,
         'resend_cooldown_seconds' => 60,
         'max_attempts' => 5,
-        'demo_mode' => true,
-        'demo_code' => '123456',
+        // local demo: true + demo_code. real SMS: false
+        'demo_mode' => false,
+        'demo_code' => null,
     ],
 
     'auth' => [
@@ -38,11 +40,11 @@ return [
     ],
 
     'sms' => [
-        'provider' => 'log',
+        'provider' => 'kavenegar', // log | kavenegar
         'kavenegar' => [
             'api_key' => '',
-            'template' => '',
-            'sender' => '',
+            'template' => 'tamplate1', // Verify Lookup template name
+            'sender' => '', // required only if template is empty
         ],
     ],
 
@@ -55,7 +57,8 @@ return [
         'allow_direct_grant' => false,
         'order_ttl_minutes' => 30,
         'callback_path' => '/shop/payments/callback',
-        'app_return_url' => 'alnajmo://shop/result',
+        // Must match app.json scheme: alnajmothagheb
+        'app_return_url' => 'alnajmothagheb://shop/result',
         'zarinpal' => [
             'merchant_id' => '',
             'sandbox' => true,

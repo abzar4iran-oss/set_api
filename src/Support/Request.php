@@ -44,6 +44,11 @@ final class Request
         return $this->json[$key] ?? $default;
     }
 
+    public function query(string $key, mixed $default = null): mixed
+    {
+        return $this->query[$key] ?? $default;
+    }
+
     public function allJson(): array
     {
         return $this->json;

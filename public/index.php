@@ -4,12 +4,14 @@ declare(strict_types=1);
 use App\Controllers\AuthController;
 use App\Controllers\CompeteMatchController;
 use App\Controllers\DailyChallengeController;
+use App\Controllers\LessonCatalogController;
 use App\Controllers\NotificationController;
 use App\Controllers\ProfileController;
 use App\Controllers\ProgressController;
 use App\Controllers\RemoteConfigController;
 use App\Controllers\ShopController;
 use App\Controllers\SupportController;
+use App\Controllers\WordPlayController;
 use App\Repositories\CompeteMatchRepository;
 use App\Repositories\DailyChallengeRepository;
 use App\Repositories\NotificationRepository;
@@ -20,10 +22,12 @@ use App\Repositories\ShopOrderRepository;
 use App\Repositories\SupportTicketRepository;
 use App\Repositories\TokenRepository;
 use App\Repositories\UserRepository;
+use App\Repositories\WordPlayRepository;
 use App\Services\AuthService;
 use App\Services\CompeteMatchService;
 use App\Services\DailyChallengeService;
 use App\Services\ExpoPushService;
+use App\Services\LessonCatalogService;
 use App\Services\NotificationService;
 use App\Services\ProfileService;
 use App\Services\ProgressService;
@@ -31,6 +35,7 @@ use App\Services\RemoteConfigService;
 use App\Services\ShopService;
 use App\Services\SmsService;
 use App\Services\SupportService;
+use App\Services\WordPlayService;
 use App\Support\Cors;
 use App\Support\Database;
 use App\Support\Request;
@@ -120,13 +125,22 @@ $dailyChallengeController = new DailyChallengeController(
         $notificationService
     )
 );
+$wordPlayController = new WordPlayController(
+    $authService,
+    new WordPlayService(
+        new WordPlayRepository($pdo),
+        $progressService
+    )
+);
+$userRepository = new UserRepository($pdo);
 $competeMatchController = new CompeteMatchController(
     $authService,
     new CompeteMatchService(
         new CompeteMatchRepository($pdo),
         $progressService,
         $remoteConfigService,
-        $notificationService
+        $notificationService,
+        $userRepository
     )
 );
 $shopController = new ShopController(
@@ -139,7 +153,6 @@ $shopController = new ShopController(
         $notificationService
     )
 );
-$userRepository = new UserRepository($pdo);
 $profileService = new ProfileService($config, $userRepository, $remoteConfigService);
 $profileController = new ProfileController($authService, $profileService);
 $supportController = new SupportController(
@@ -151,6 +164,9 @@ $supportController = new SupportController(
         $notificationService
     ),
     $config
+);
+$lessonCatalogController = new LessonCatalogController(
+    new LessonCatalogService($config)
 );
 $request = new Request();
 $router = new Router();
@@ -169,6 +185,9 @@ $router->add('PUT', '/config', [$remoteConfigController, 'put']);
 $router->add('POST', '/config', [$remoteConfigController, 'put']);
 $router->add('POST', '/config/reset', [$remoteConfigController, 'reset']);
 
+$router->add('GET', '/lessons', [$lessonCatalogController, 'list']);
+$router->add('GET', '/lessons/get', [$lessonCatalogController, 'get']);
+
 $router->add('GET', '/progress', [$progressController, 'get']);
 $router->add('POST', '/progress/import', [$progressController, 'import']);
 $router->add('POST', '/progress/action', [$progressController, 'action']);
@@ -177,6 +196,11 @@ $router->add('GET', '/daily-challenge', [$dailyChallengeController, 'status']);
 $router->add('POST', '/daily-challenge/start', [$dailyChallengeController, 'start']);
 $router->add('POST', '/daily-challenge/commit', [$dailyChallengeController, 'commit']);
 $router->add('POST', '/daily-challenge/submit', [$dailyChallengeController, 'submit']);
+
+$router->add('GET', '/word-play', [$wordPlayController, 'status']);
+$router->add('POST', '/word-play/start', [$wordPlayController, 'start']);
+$router->add('POST', '/word-play/hint', [$wordPlayController, 'hint']);
+$router->add('POST', '/word-play/complete', [$wordPlayController, 'complete']);
 
 $router->add('GET', '/matches/active', [$competeMatchController, 'active']);
 $router->add('GET', '/matches/get', [$competeMatchController, 'get']);

@@ -36,7 +36,7 @@ $pdo->exec('DELETE FROM compete_matches WHERE user_id = ' . $uid);
 
 $remote = new RemoteConfigService($config);
 $progress = new ProgressService(new ProgressRepository($pdo), $remote);
-$svc = new CompeteMatchService(new CompeteMatchRepository($pdo), $progress, $remote);
+$svc = new CompeteMatchService(new CompeteMatchRepository($pdo), $progress, $remote, null, $users);
 
 // ensure coins
 $snap = $progress->getMappedProgress($uid);

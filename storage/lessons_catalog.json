@@ -1,0 +1,595 @@
+{
+  "version": 1,
+  "updated_at": "2026-07-11T22:21:16.877Z",
+  "path_lesson_ids": [
+    1,
+    2,
+    3,
+    56,
+    4,
+    5,
+    6,
+    7,
+    8,
+    108,
+    9,
+    10,
+    109,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55
+  ],
+  "learn_lesson_ids": [
+    1,
+    2,
+    3,
+    56,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55
+  ],
+  "workshop_lesson_ids": [
+    108
+  ],
+  "exam_lesson_ids": [
+    109
+  ],
+  "lessons_per_surah_listen": 2,
+  "lessons": [
+    {
+      "id": 1,
+      "term": 1,
+      "type": "learn",
+      "title": "الفبای قرآنی",
+      "focus": "شناخت شکل و اتصال حروف",
+      "media_folder": "lesson_01_Arabic_Alphabet"
+    },
+    {
+      "id": 2,
+      "term": 1,
+      "type": "learn",
+      "title": "مخارج حروف — بخش اول",
+      "focus": "تلفظ صحیح ع، غ، ق، ض",
+      "media_folder": "lesson_02_makhraj"
+    },
+    {
+      "id": 3,
+      "term": 1,
+      "type": "learn",
+      "title": "مخارج حروف — بخش دوم",
+      "focus": "تلفظ صحیح ح، خ، ص، ط، ظ",
+      "media_folder": "lesson_03_makhraj_2"
+    },
+    {
+      "id": 56,
+      "term": 1,
+      "type": "learn",
+      "title": "حرکات",
+      "focus": "شناخت علامت فتحه (ـَ)، کسره (ـِ) و ضمه (ـُ)",
+      "media_folder": null
+    },
+    {
+      "id": 4,
+      "term": 1,
+      "type": "learn",
+      "title": "کلمات فتحه",
+      "focus": "علامت (ــَـ) و خواندن کلمات سه‌حرفی",
+      "media_folder": "lesson_04_word_fatha"
+    },
+    {
+      "id": 5,
+      "term": 1,
+      "type": "learn",
+      "title": "الفبا با کسره",
+      "focus": "علامت (ــِـ) و تلفظ ۲۸ حرف با کسره",
+      "media_folder": "lesson_05_alephbat_kasre"
+    },
+    {
+      "id": 6,
+      "term": 1,
+      "type": "learn",
+      "title": "کلمات فتحه و کسره",
+      "focus": "ترکیب فتحه و کسره در کلمات دو و سه‌حرفی",
+      "media_folder": "lesson_06_word_fatha_and_kasre"
+    },
+    {
+      "id": 7,
+      "term": 1,
+      "type": "learn",
+      "title": "الفبا با ضمه",
+      "focus": "علامت (ــُـ) و تلفظ ۲۸ حرف با ضمه",
+      "media_folder": "lesson07_alephbat_dame"
+    },
+    {
+      "id": 8,
+      "term": 1,
+      "type": "learn",
+      "title": "کلمات فتحه، کسره و ضمه",
+      "focus": "ترکیب فتحه، کسره و ضمه در کلمات (خُلِقَ)",
+      "media_folder": "lesson08_dame_word_fatha_kasre_dame"
+    },
+    {
+      "id": 9,
+      "term": 1,
+      "type": "learn",
+      "title": "علامت سکون — بخش اول",
+      "focus": "۱۰ کلمه — تمرین گلچین تا ۶۰ سوال",
+      "media_folder": "lesson09_Sokoon"
+    },
+    {
+      "id": 10,
+      "term": 1,
+      "type": "learn",
+      "title": "علامت سکون — بخش دوم",
+      "focus": "کلمات دوحرفی با سکون — هر ۴ صدا یک تصویر",
+      "media_folder": "lesson10_sokoon2"
+    },
+    {
+      "id": 108,
+      "term": 1,
+      "type": "workshop",
+      "title": "کارگاه اول",
+      "focus": "آزمون عملی مطالب دروس ۱ تا ۸ و حرکات — ۴ تمرین از هر روش، بدون تکرار صوتی",
+      "media_folder": null
+    },
+    {
+      "id": 109,
+      "term": 1,
+      "type": "exam",
+      "title": "آزمون جامع ترم اول",
+      "focus": "۶۰ سوال گلچین از دروس ۱ تا ۱۱ — بیشتر کلمات",
+      "media_folder": null
+    },
+    {
+      "id": 11,
+      "term": 2,
+      "type": "learn",
+      "title": "الف مد — بخش اول",
+      "focus": "آموزش ۲۸ حرف با صدای کشیده (آ)",
+      "media_folder": "lesson11Letters_of_Madd_alephbet"
+    },
+    {
+      "id": 12,
+      "term": 2,
+      "type": "learn",
+      "title": "الف مد — بخش دوم",
+      "focus": "خواندن کلمات با صدای کشیده (آ) — تمرین گلچین تا ۶۰ سوال",
+      "media_folder": "lesson12_Letters_of_Madd_word"
+    },
+    {
+      "id": 13,
+      "term": 2,
+      "type": "learn",
+      "title": "یاء مد — بخش اول",
+      "focus": "آموزش حروف با صدای کشیده (یَ)",
+      "media_folder": "lesson13_Letters_of_Madd_ya_alephbet"
+    },
+    {
+      "id": 14,
+      "term": 2,
+      "type": "learn",
+      "title": "یاء مد — بخش دوم",
+      "focus": "خواندن کلمات با صدای کشیده (یَ)",
+      "media_folder": "lEsson14_madd_ya_word"
+    },
+    {
+      "id": 15,
+      "term": 2,
+      "type": "learn",
+      "title": "واو مد — بخش اول",
+      "focus": "آموزش حروف با صدای کشیده (وُ)",
+      "media_folder": "lesson15_Letters_of_Madd_aoo"
+    },
+    {
+      "id": 16,
+      "term": 2,
+      "type": "learn",
+      "title": "واو مد — بخش دوم",
+      "focus": "خواندن کلمات با صدای کشیده (وُ)",
+      "media_folder": "lesson16_Letters_of_Madd_aoo_word"
+    },
+    {
+      "id": 17,
+      "term": 2,
+      "type": "learn",
+      "title": "تنوین فتح — بخش اول",
+      "focus": "نشانه (ً) و تولید صدای نون ساکن (ـَنْ)",
+      "media_folder": "lesson17_TANVIIN_alephbe"
+    },
+    {
+      "id": 18,
+      "term": 2,
+      "type": "learn",
+      "title": "تنوین فتح — بخش دوم",
+      "focus": "خواندن کلمات با تنوین فتح",
+      "media_folder": "lesson18_Tanween_word"
+    },
+    {
+      "id": 19,
+      "term": 2,
+      "type": "learn",
+      "title": "تنوین کسر — بخش اول",
+      "focus": "نشانه (ٍ) و تولید صدای (ـِنْ)",
+      "media_folder": "lesson19_tanvin_kasre_alephbe"
+    },
+    {
+      "id": 20,
+      "term": 2,
+      "type": "learn",
+      "title": "تنوین کسر — بخش دوم",
+      "focus": "خواندن کلمات با تنوین کسر",
+      "media_folder": "lesson20_tanvin_kasre_word"
+    },
+    {
+      "id": 21,
+      "term": 2,
+      "type": "learn",
+      "title": "تنوین ضم — بخش اول",
+      "focus": "نشانه (ٌ) و تولید صدای (ـُنْ)",
+      "media_folder": "lesson21_tanvin_dame_alephbet"
+    },
+    {
+      "id": 22,
+      "term": 2,
+      "type": "learn",
+      "title": "تنوین ضم — بخش دوم",
+      "focus": "خواندن کلمات با تنوین ضم",
+      "media_folder": "lesson22_tanvin_dame_word"
+    },
+    {
+      "id": 23,
+      "term": 2,
+      "type": "learn",
+      "title": "تشدید فتح — بخش اول",
+      "focus": "آموزش حروف با تشدید و فتحه",
+      "media_folder": "lesson23_tashdid_fahe_alephbet"
+    },
+    {
+      "id": 24,
+      "term": 2,
+      "type": "learn",
+      "title": "تشدید فتح — بخش دوم",
+      "focus": "خواندن کلمات با تشدید فتح",
+      "media_folder": "lesson24_tashdid_fathe_word"
+    },
+    {
+      "id": 25,
+      "term": 3,
+      "type": "learn",
+      "title": "تشدید کسر — بخش اول",
+      "focus": "آموزش حروف با تشدید و کسره",
+      "media_folder": "lesson25_tashdid_kasre-alephbet"
+    },
+    {
+      "id": 26,
+      "term": 3,
+      "type": "learn",
+      "title": "تشدید کسر — بخش دوم",
+      "focus": "خواندن کلمات با تشدید کسر",
+      "media_folder": "lesson26_tashdid_kasre-word"
+    },
+    {
+      "id": 27,
+      "term": 3,
+      "type": "learn",
+      "title": "تشدید ضم — بخش اول",
+      "focus": "آموزش حروف با تشدید و ضمه",
+      "media_folder": "lesson27_tashdid_dame-alephbet"
+    },
+    {
+      "id": 28,
+      "term": 3,
+      "type": "learn",
+      "title": "تشدید ضم — بخش دوم",
+      "focus": "خواندن کلمات با تشدید ضم",
+      "media_folder": "lesson28_tashdid_dame-word"
+    },
+    {
+      "id": 29,
+      "term": 3,
+      "type": "learn",
+      "title": "تشدید و تنوین فتح — بخش اول",
+      "focus": "آموزش حروف با تشدید و تنوین فتح",
+      "media_folder": "lesson29_tashdid_and_tanvin_alephbet_fatha"
+    },
+    {
+      "id": 30,
+      "term": 3,
+      "type": "learn",
+      "title": "تشدید و تنوین فتح — بخش دوم",
+      "focus": "خواندن کلمات با تشدید و تنوین فتح",
+      "media_folder": "lesson30_tashdid_and_tanvin_word_fatha"
+    },
+    {
+      "id": 31,
+      "term": 3,
+      "type": "learn",
+      "title": "تشدید و تنوین کسر — بخش اول",
+      "focus": "آموزش حروف با تشدید و تنوین کسر",
+      "media_folder": "lesson31_tashdid_and_tanvin_alephbet_kasre"
+    },
+    {
+      "id": 32,
+      "term": 3,
+      "type": "learn",
+      "title": "تشدید و تنوین کسر — بخش دوم",
+      "focus": "خواندن کلمات با تشدید و تنوین کسر",
+      "media_folder": "lesson32_tashdid_and_tanvin_word_kasre"
+    },
+    {
+      "id": 33,
+      "term": 3,
+      "type": "learn",
+      "title": "تشدید و تنوین ضم — بخش اول",
+      "focus": "آموزش حروف با تشدید و تنوین ضم",
+      "media_folder": "lesson33_tashdid_and_tanvin_alephbet_dame"
+    },
+    {
+      "id": 34,
+      "term": 3,
+      "type": "learn",
+      "title": "تشدید و تنوین ضم — بخش دوم",
+      "focus": "خواندن کلمات با تشدید و تنوین ضم",
+      "media_folder": "lesson34_tashdid_and_tanvin_word_dame"
+    },
+    {
+      "id": 35,
+      "term": 4,
+      "type": "learn",
+      "title": "خواندن دو کلمه — بخش اول",
+      "focus": "روخوانی و اتصال دو کلمه قرآنی",
+      "media_folder": "lesson35_reading_two_word"
+    },
+    {
+      "id": 36,
+      "term": 4,
+      "type": "learn",
+      "title": "خواندن دو کلمه — بخش دوم",
+      "focus": "ادامه تمرین خواندن دو کلمه",
+      "media_folder": "lesson36_reading_two_word_exercise2"
+    },
+    {
+      "id": 37,
+      "term": 4,
+      "type": "learn",
+      "title": "خواندن سه کلمه — بخش اول",
+      "focus": "روخوانی و اتصال سه کلمه قرآنی",
+      "media_folder": "lesson37_reading_three_word_1"
+    },
+    {
+      "id": 38,
+      "term": 4,
+      "type": "learn",
+      "title": "خواندن سه کلمه — بخش دوم",
+      "focus": "ادامه تمرین خواندن سه کلمه",
+      "media_folder": "lesson38_reading_three_word_2"
+    },
+    {
+      "id": 39,
+      "term": 4,
+      "type": "learn",
+      "title": "همزه وصل — بخش اول",
+      "focus": "قاعده اتصال و پریدن از روی الف در میان کلمات",
+      "media_folder": "lesson39_hamzah_al_wasl_1"
+    },
+    {
+      "id": 40,
+      "term": 4,
+      "type": "learn",
+      "title": "همزه وصل — بخش دوم",
+      "focus": "ادامه تمرین همزه وصل",
+      "media_folder": "lesson40_hamzah_al_wasl_2"
+    },
+    {
+      "id": 41,
+      "term": 4,
+      "type": "learn",
+      "title": "حروف قمری — بخش اول",
+      "focus": "خواندن «ال» تعریف قبل از حروف قمری",
+      "media_folder": "lesson41_horof_alghamariyyah_1"
+    },
+    {
+      "id": 42,
+      "term": 4,
+      "type": "learn",
+      "title": "حروف قمری — بخش دوم",
+      "focus": "ادامه تمرین حروف قمری",
+      "media_folder": "lesson42_horof_alghamariyyah_2"
+    },
+    {
+      "id": 43,
+      "term": 4,
+      "type": "learn",
+      "title": "حروف شمسی — بخش اول",
+      "focus": "ادغام «ال» با حروف شمسی",
+      "media_folder": "lesson43_horof_alshamsyya_1"
+    },
+    {
+      "id": 44,
+      "term": 4,
+      "type": "learn",
+      "title": "حروف شمسی — بخش دوم",
+      "focus": "ادامه تمرین حروف شمسی",
+      "media_folder": "lesson44_horof_alshamsyya_2"
+    },
+    {
+      "id": 45,
+      "term": 5,
+      "type": "learn",
+      "title": "همزه و الف — بخش اول",
+      "focus": "ترکیب همزه و الف در کلمات قرآنی",
+      "media_folder": "lesson45_combined_hamza_alif_1"
+    },
+    {
+      "id": 46,
+      "term": 5,
+      "type": "learn",
+      "title": "همزه و الف — بخش دوم",
+      "focus": "ادامه تمرین همزه و الف",
+      "media_folder": "lesson46_combined_hamza_alif_2"
+    },
+    {
+      "id": 47,
+      "term": 5,
+      "type": "learn",
+      "title": "همزه و الف — بخش سوم",
+      "focus": "ترکیب لام با همزه و الف",
+      "media_folder": "lesson47_combined_laam_hamza_alif_3"
+    },
+    {
+      "id": 48,
+      "term": 5,
+      "type": "learn",
+      "title": "میم مشدّد",
+      "focus": "تلفظ و غنه میم مشدّد در کلمات قرآنی",
+      "media_folder": "lesson48_meem_and_with_tashdid"
+    },
+    {
+      "id": 49,
+      "term": 5,
+      "type": "learn",
+      "title": "نون مشدّد",
+      "focus": "تلفظ و غنه نون مشدّد در کلمات قرآنی",
+      "media_folder": "lesson49_noon_with_tashdid"
+    },
+    {
+      "id": 50,
+      "term": 5,
+      "type": "learn",
+      "title": "واو لیْن",
+      "focus": "خواندن واو لیْن در کلمات قرآنی",
+      "media_folder": "lesson50_wow_leen"
+    },
+    {
+      "id": 51,
+      "term": 5,
+      "type": "learn",
+      "title": "یاء لیْن",
+      "focus": "خواندن یاء لیْن در کلمات قرآنی",
+      "media_folder": "lesson51_yaa_leen"
+    },
+    {
+      "id": 52,
+      "term": 5,
+      "type": "learn",
+      "title": "نون ساکن — اظهار",
+      "focus": "اظهار نون ساکن و تنوین قبل از حروف حلق",
+      "media_folder": "lesson52_noon_khana"
+    },
+    {
+      "id": 53,
+      "term": 5,
+      "type": "learn",
+      "title": "نون ساکن — ادغام",
+      "focus": "ادغام نون ساکن و تنوین با حروف یرملون",
+      "media_folder": "lesson53_noon_edgham_ba_baadi"
+    },
+    {
+      "id": 54,
+      "term": 5,
+      "type": "learn",
+      "title": "نون ساکن — اقلاب",
+      "focus": "اقلاب نون ساکن و تنوین قبل از باء",
+      "media_folder": "lesson54_noon_eghlab"
+    },
+    {
+      "id": 55,
+      "term": 5,
+      "type": "learn",
+      "title": "نون ساکن — اخفاء",
+      "focus": "اخفاء نون ساکن و تنوین قبل از حروف اخفاء",
+      "media_folder": "lesson55_noon_al_ikhfa"
+    }
+  ]
+}

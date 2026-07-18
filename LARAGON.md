@@ -19,9 +19,10 @@
 با Start All خود لارگون یا `start-laragon-apache.bat` این مشکل نیست.
 
 ## MySQL (اختیاری)
-فعلاً SQLite فعال است.
-بعد از Start All لارگون و آماده شدن MySQL:
+فعلاً SQLite فعال است (auto-migrate — نیازی به import دستی نیست).
+اگر MySQL خواستید، بعد از Start All لارگون:
 ```sql
 source D:/api/database/schema.sql
 ```
 سپس در `config/config.php` مقدار `driver` را `mysql` کن.
+توجه: حتی بدون import هم با اولین درخواست، `Database::migrate()` جداول را می‌سازد.

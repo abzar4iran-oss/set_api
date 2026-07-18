@@ -1,33 +1,42 @@
-# کاوه‌نگار — تنظیم OTP
+# کاوه‌نگار — OTP واقعی
 
-API Key داخل `config/config.php` قرار گرفت و `demo_mode` خاموش شد.
+وضعیت فعلی در `config/config.php`:
 
-## هنوز یک مورد از شما لازم است
+- `otp.demo_mode` = `false` (کد تصادفی، نه `123456`)
+- `sms.provider` = `kavenegar`
+- `sms.kavenegar.template` = `tamplate1`
+- `sms.kavenegar.sender` = `0018018949161` (فقط وقتی template خالی باشد)
 
-بدون یکی از این دو حالت، پیامک واقعی ارسال نمی‌شود:
+## قالب Verify Lookup
 
-### روش ۱ (ساده‌تر برای شروع): شماره خط
-1. وارد پنل کاوه‌نگار شوید
-2. بروید به **خطوط**
-3. شماره خط خریداری‌شده را کپی کنید (مثلاً `1000xxxxxxx`)
-4. در فایل `config/config.php` این بخش را پر کنید:
+1. پنل کاوه‌نگار → **اعتبارسنجی / Verify**
+2. نام قالب باید دقیقاً با config یکی باشد: `tamplate1`
+3. متن قالب باید شامل `%token` باشد (مثلاً):
 
-```php
-'sender' => 'NUMBERS_HERE',
-'template' => '',
+```text
+کد تأیید النجم ثاقب: %token
 ```
 
-### روش ۲ (پیشنهادی برای OTP): قالب Verify
-1. در پنل: **اعتبارسنجی / Verify Lookup**
-2. قالب جدید بسازید، مثلاً نام: `alnajmoverify`
-3. متن:
-   `کد تأیید النجم ثاقب: %token`
-4. بعد از تأیید قالب توسط کاوه‌نگار، در config:
+4. قالب باید توسط کاوه‌نگار **تأیید** شده باشد.
+
+اگر نام قالب فرق دارد، فقط همین خط را عوض کن:
 
 ```php
-'template' => 'alnajmoverify',
-'sender' => '',
+'template' => 'NAME_EXACTLY_AS_IN_PANEL',
 ```
+
+## تست سریع
+
+```bash
+curl -X POST http://localhost/api/public/auth/otp/send ^
+  -H "Content-Type: application/json" ^
+  -d "{\"phone\":\"09XXXXXXXXX\"}"
+```
+
+پاسخ موفق نباید `demo_code` داشته باشد. کد فقط روی گوشی پیامک می‌شود.
+
+لاگ ارسال: `storage/logs/sms.log`
 
 ## امنیت
-کلید API را در چت فرستادید. بعد از راه‌اندازی، از پنل کاوه‌نگار **کلید را عوض/بازتولید** کنید و مقدار جدید را فقط در `config.php` بگذارید.
+
+کلید API محرمانه است. بعد از راه‌اندازی، از پنل کلید را عوض/بازتولید کن و فقط در `config.php` بگذار.

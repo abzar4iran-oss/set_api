@@ -112,6 +112,43 @@ final class UserRepository
         return $this->findById($userId) ?? [];
     }
 
+    /**
+     * یک کاربر دیگر با پروفایل کامل برای نمایش به‌عنوان حریف مسابقه.
+     * اول کسانی که عکس پروفایل دارند، بعد بقیه.
+     *
+     * @return array{id:int,first_name:string,last_name:string,avatar_url:?string,city:string}|null
+     */
+    public function findRandomOpponent(int $excludeUserId): ?array
+    {
+        $driver = (string) $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $rand = $driver === 'mysql' ? 'RAND()' : 'RANDOM()';
+
+        $sqlWithAvatar = "SELECT id, first_name, last_name, avatar_url, city
+            FROM users
+            WHERE id != :id
+              AND profile_complete = 1
+              AND avatar_url IS NOT NULL
+              AND TRIM(avatar_url) != ''
+            ORDER BY {$rand}
+            LIMIT 1";
+        $stmt = $this->db->prepare($sqlWithAvatar);
+        $stmt->execute(['id' => $excludeUserId]);
+        $row = $stmt->fetch();
+        if ($row) {
+            return $row;
+        }
+
+        $sqlAny = "SELECT id, first_name, last_name, avatar_url, city
+            FROM users
+            WHERE id != :id AND profile_complete = 1
+            ORDER BY {$rand}
+            LIMIT 1";
+        $stmt = $this->db->prepare($sqlAny);
+        $stmt->execute(['id' => $excludeUserId]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
     public function updateSettingsJson(int $userId, string $settingsJson): array
     {
         $stmt = $this->db->prepare(
