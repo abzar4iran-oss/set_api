@@ -1,6 +1,6 @@
 {
-    "version": 7,
-    "updated_at": "2026-07-18T22:00:00+00:00",
+    "version": 8,
+    "updated_at": "2026-07-18T23:00:00+00:00",
     "features": {
         "compete_enabled": true,
         "daily_challenge_enabled": true,
@@ -8,7 +8,7 @@
         "notifications_enabled": true,
         "support_enabled": true,
         "unlock_all_stages": false,
-        "show_designer_exercise_nav": true
+        "show_designer_exercise_nav": false
     },
     "app": {
         "min_version": "1.0.0",
@@ -24,7 +24,7 @@
         "heart_refill_coin_cost": 12,
         "heart_regen_minutes": 240,
         "wrong_answer_coin_penalty": 0,
-        "correct_answer_coin_reward": 2,
+        "correct_answer_coin_reward": 0,
         "correct_answer_points_reward": 2,
         "lesson_complete_coin_reward": 5,
         "lesson_complete_points_reward": 10,

@@ -385,7 +385,16 @@ final class ProgressService
             $points *= max(1, (int) ($economy['premium_points_multiplier'] ?? 2));
         }
         $row['compete_points'] = (int) $row['compete_points'] + $points;
-        return [$row, ['points_added' => $points]];
+
+        $coins = (int) ($economy['correct_answer_coin_reward'] ?? 0);
+        if ($coins > 0) {
+            $row['coins'] = (int) $row['coins'] + $coins;
+        }
+
+        return [$row, [
+            'points_added' => $points,
+            'coins_added' => $coins > 0 ? $coins : 0,
+        ]];
     }
 
     /** @return array{0: array, 1: array} */
